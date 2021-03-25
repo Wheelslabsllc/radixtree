@@ -548,6 +548,10 @@ func TestRunesWalk(t *testing.T) {
 	testWalk(t, new(Runes))
 }
 
+func TestRunesWalkUnder(t *testing.T) {
+	testWalkUnder(t, new(Runes))
+}
+
 func TestRunesWalkError(t *testing.T) {
 	testWalkError(t, new(Runes))
 }
