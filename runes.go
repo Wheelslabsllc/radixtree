@@ -261,7 +261,31 @@ func (tree *Runes) compress() {
 	}
 }
 
-// Walk walks the radix tree rooted at root ("" to start at root or tree),
+// WalkUnder walks the radix tree rooted at root ("" to start at root of tree),
+// calling walkFn for each value found. If walkFn returns an error, the walk is
+// aborted. If walkFn returns Skip, Walk will not descend into the node's
+// children. The tree is traversed depth-first, in no guaranteed order.
+func (tree *Runes) WalkUnder(root string, walkFn WalkFunc) error {
+	if root != "" {
+		iter := tree.NewIterator()
+		// Traverse tree to get to node at key
+		for _, r := range root {
+			if !iter.Next(r) {
+				return nil
+			}
+		}
+		tree = iter.node
+		if tree == nil {
+			return nil
+		}
+	}
+
+	// Walk down tree starting at node located at root
+	return tree.walk(&runesKeyStringer{[]rune(root)}, walkFn)
+}
+
+
+// Walk walks the radix tree rooted at root ("" to start at root of tree),
 // calling walkFn for each value found. If walkFn returns an error, the walk is
 // aborted. If walkFn returns Skip, Walk will not descend into the node's
 // children.
